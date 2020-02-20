@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>second</ion-title>
+    <ion-button slot="end" routerLink="/acciones"><ion-icon name="locate"></ion-icon></ion-button>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Congratulation!</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      You have new accion...
+      <h2>Accion: {{doc.accion}}</h2>
+      <h4>Descripcion: {{doc.descripcion}}</h4>
+      <h6>estatus: {{estatus}}</h6>
+    </ion-card-content>
+  </ion-card>
+</ion-content> 

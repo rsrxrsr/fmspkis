@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-row style="background-color:#96a3b2;height: 100%;">
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center>
+      <div>
+        <img src="assets/imgs/logo1.png" alt="" />
+      </div>
+    </ion-col>
+    <ion-col size="8" text-center>
+      <p style="color: white;"><b>Perfil </b></p>
+    </ion-col>
+
+    <ion-col size="2" style="background-color:#2a4a7c;">
+      <ion-menu-button class="menuHam"></ion-menu-button>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- código nuevo  -->
+  <br /><br />
+  <ion-card style="background-color: #cad0d8;" class="shadowCard">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4" push="4" text-center>
+          <div>
+            <img [src]="doc.foto" class="imagenAvatar" />
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="3" push="2">
+          <p class="celdasNegritas">Nombre:</p>
+        </ion-col>
+        <ion-col size="7" push="2">
+          <p class="celdasNegritas">
+            <b>{{ doc.usuario }}</b>
+          </p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3" push="2">
+          <p class="celdasNegritas">Correo:</p>
+        </ion-col>
+        <ion-col size="7" push="2">
+          <p class="celdasNegritas">
+            <b>{{ doc.correo }}</b>
+          </p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3" push="2">
+          <p class="celdasNegritas">Región:</p>
+        </ion-col>
+        <ion-col size="7" push="2">
+          <p class="celdasNegritas">
+            <b>{{ delta.estado.nombre }}</b>
+          </p>
+        </ion-col>
+      </ion-row>
+
+      <br />
+
+      <ion-row>
+        <ion-col size="8" push="2">
+          <ion-button
+            (click)="selectRow($event, delta.colonia)"
+            class="btnDetalle"
+            expand="full"
+            shape="round"
+          >
+            <ion-icon name="globe" mode="ios"> </ion-icon>&nbsp; Demarcación
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-col>
+    <!-- <div id="mapauser" style="left:10%;width:80%;height:50%"></div> -->
+  </ion-col>
+</ion-content>

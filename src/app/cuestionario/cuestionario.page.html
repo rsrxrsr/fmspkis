@@ -1,0 +1,201 @@
+<ion-header>
+  <ion-row style="background-color:#96a3b2;height: 100%;">
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center>
+      <div>
+        <img src="assets/imgs/logo1.png" alt="" />
+      </div>
+    </ion-col>
+    <ion-col size="8" text-center>
+      <p style="color: white;"><b>Encuesta</b></p>
+    </ion-col>
+
+    <ion-col size="2" style="background-color:#2a4a7c;">
+      <ion-menu-button class="menuHam"></ion-menu-button>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-content padding class="tema-app">
+  <div padding-horizontal text-center>
+    <img src="../../assets/imgs/text.png" alt="Observador ciudadano" />
+  </div>
+  <ion-grid>
+    <form (ngSubmit)="setRespuestas()" #registerForm="ngForm">
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>Encuesta</ion-label>
+            <ion-select
+              [(ngModel)]="delta.encuesta"
+              name="encuesta"
+              (ionChange)="setIdRegion()"
+            >
+              <ion-select-option
+                *ngFor="
+                  let opcion of firebaseService.modelo['encuestaInstancia']
+                "
+                [value]="opcion"
+                >{{ opcion.encuesta }}</ion-select-option
+              >
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <!-- empieza información de la encuesta -->
+      <div *ngIf="delta.encuesta['encuesta']">
+      <br />
+      <ion-row>
+        <ion-col size="4">
+          <p class="negritas">Encuesta:</p>
+        </ion-col>
+        <ion-col
+          size="8"
+          style="background-color:rgba(0,0,0,0.1);width: 100%;height: 50px;"
+        >
+          {{ doc.encuesta }}
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="4">
+          <p class="negritas">Cuestionario:</p>
+        </ion-col>
+        <ion-col
+          class="custionarioItem"
+          size="8"
+          style="background-color:rgba(0,0,0,0.1);width: 100%;height: 70px;"
+        >
+          {{ doc.descripcion }}
+        </ion-col>
+      </ion-row>
+      <br />
+      <ion-row>
+        <ion-col size="4">
+          <p class="negritas">Fecha inicio:</p>
+        </ion-col>
+        <ion-col
+          size="8"
+          style="background-color:rgba(0,0,0,0.1);width: 100%;height: 50px;"
+        >
+          {{ doc.instancias.fhInicio | date:'dd/MM/yyy'}}
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="4">
+          <p class="negritas">Fecha fin:</p>
+        </ion-col>
+        <ion-col
+          size="8"
+          style="background-color:rgba(0,0,0,0.1);width: 100%;height: 50px;"
+        >
+          {{ doc.instancias.fhFin | date:'dd/MM/yyyy'}}
+        </ion-col>
+      </ion-row>
+      </div>
+      <!-- termina informacion de la encuesta -->
+
+      <!-- empieza encuesta -->
+      <ion-row>
+        <ion-col size="12">
+          <div
+            *ngFor="let item of doc.preguntas; even as isEven; let idx = index"
+          >
+            <ion-row
+              no-padding
+              [ngClass]="isEven ? 'even' : 'odd'"
+              class="pointer"
+            >
+              <ion-col size="2">
+                {{ item.cvPregunta }}
+              </ion-col>
+              <ion-col size="10">
+                {{ item.pregunta }}
+                <ion-input
+                  type="text"
+                  placeholder="Proporcione su respuesta"
+                  name="respuesta-{{ idx }}"
+                  [(ngModel)]="item.respuesta"
+                  required
+                  *ngIf="item.tipo == 'abierta'"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-list *ngIf="item.tipo == 'cerrada'">
+              <ion-radio-group
+                [(ngModel)]="item.respuesta"
+                name="respuesta-{{ idx }}"
+                required
+              >
+                {{ item.respuesta }}
+                <div
+                  *ngFor="
+                    let itemOp of item.opciones;
+                    even as isEven;
+                    let idy = index
+                  "
+                >
+                  <ion-item>
+                    <ion-label>{{ itemOp.cvOpcion }}</ion-label>
+                    <ion-label>{{ itemOp.opcion }}</ion-label>
+                    <ion-radio [value]="itemOp.valor"></ion-radio>
+                  </ion-item>
+                </div>
+              </ion-radio-group>
+            </ion-list>
+
+            <ion-list *ngIf="item.tipo == 'multiple'">
+              {{ item.respuesta }}
+              <ion-item
+                *ngFor="
+                  let itemOp of item.opciones;
+                  even as isEven;
+                  let idy = index
+                "
+              >
+              <ion-label>{{ itemOp.cvOpcion }}</ion-label>
+              <ion-label>{{ itemOp.opcion }}</ion-label>
+                <ion-checkbox
+                  slot="end"
+                  [(ngModel)]="itemOp.isChecked"
+                  name="respuesta-{{ idx }}"
+                  required
+                ></ion-checkbox>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-col>
+      </ion-row>
+      <!-- termina encuesta -->
+      <!-- botón para enviar -->
+      <ion-row>
+        <ion-col class="ion-col" *ngIf="delta.encuesta['encuesta']">
+          <ion-button
+            class="btnDetalle"
+            expand="full"
+            full
+            shape="round"
+            type="submit"
+            [disabled]="!registerForm.form.valid"
+            >Guardar</ion-button
+          >
+        </ion-col>
+        <ion-col class="ion-col" *ngIf="isUpdate">
+          <ion-button
+            class="btnDetalle"
+            shape="round"
+            expand="full"
+            full
+            type="button"
+            (click)="setRespuestas()"
+            [disabled]="!registerForm.form.valid"
+          >
+            Borrar</ion-button
+          >
+        </ion-col>
+      </ion-row>
+      <!-- termina botón -->
+    </form>
+  </ion-grid>
+</ion-content>

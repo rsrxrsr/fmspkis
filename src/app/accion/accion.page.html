@@ -1,0 +1,250 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Acción</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding class="tema-app">
+  <div padding-horizontal text-center>
+    <img src="../../assets/imgs/text.png" alt="Observador ciudadano" />
+  </div>
+  <ion-grid>
+    <form (ngSubmit)="registrar()" #registerForm="ngForm">
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Tipo:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="text"
+            name="tipo"
+            [value]="doc.idCaso ? doc.tipo + ' Caso' : doc.tipo + ' Región'"
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row  *ngIf="doc.tipo == 'Encuesta' && firebaseService.modelo['encuestas']">
+        <ion-col size="12">
+          <ion-label stacked>Encuesta:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="text"
+            placeholder="Encuesta"
+            name="Encuesta"
+            [(ngModel)]="firebaseService.modelo['encuestas'][doc.idEncuesta].encuesta"
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>      
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Acción:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="text"
+            placeholder="Acción"
+            name="Accion"
+            [(ngModel)]="doc.accion"
+            required
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Descripción:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="text"
+            placeholder="Descripción"
+            name="Descripcion"
+            [(ngModel)]="doc.descripcion"
+            required
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Fecha inicio:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="date"
+            placeholder="fecha alta"
+            name="fhAlta"
+            [(ngModel)]="doc.fhAlta"
+            required
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Fecha final planeada:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="date"
+            placeholder="fecha fin plan"
+            name="fhFinPlan"
+            [(ngModel)]="doc.fhFinPlan"
+            readonly
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Autoridad Responsable:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-input
+            class="fondoOutput"
+            type="text"
+            placeholder="Responsable"
+            name="Responsable"
+            [(ngModel)]="doc.responsable"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Informe:</ion-label>
+        </ion-col>
+        <ion-col class="output" size="12">
+          <ion-textarea rows={5} cols={36}
+            class="fondoOutput"
+            type="text"
+            placeholder="Informe"
+            name="Informe"
+            [(ngModel)]="doc.informe"
+            readonly
+          ></ion-textarea>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Avance:</ion-label>
+        </ion-col>
+        <ion-col class="input" size="12">
+          <ion-textarea rows={3} cols={36}
+            class="fondoInput"
+            type="text"
+            placeholder="Informe"
+            name="InformeAvance"
+            [(ngModel)]="informe"
+            required
+          ></ion-textarea>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="doc.idCaso">
+        <ion-col size="12">
+          <ion-label stacked>% Avance:</ion-label>
+        </ion-col>
+        <ion-col class="input" size="12">
+          <ion-input
+            class="fondoInput"
+            type="number"
+            inputmode="decimal"
+            min="0.00"
+            max="100.00"
+            step=".10"
+            placeholder="% Avance"
+            name="Avance"
+            [(ngModel)]="doc.avance"
+          >
+          </ion-input>
+        </ion-col>
+      </ion-row>
+      <!--
+      <ion-row>
+        <ion-col size="12">
+          <ion-label stacked>Fecha fin: {{fecha | date:'yyyy'}}</ion-label>
+        </ion-col>
+        <ion-col class="input" size="12">
+           <ion-datetime
+            class="fondoInput"
+            type="date"
+            placeholder="fecha fin"
+            name="fhFin"
+            [(ngModel)]="doc.fhFin"
+            displayFormat="DD/MM/YYYY"
+            min="{{doc.fhAlta}}"
+            max="{{fecha | date:'yyyy-MM-dd'}}"
+          >
+          </ion-datetime>
+        </ion-col>
+      </ion-row>
+      <br />
+      <ion-row>
+        <ion-col size="12">
+          <ion-item color="light">
+            <ion-label stacked>Estatus</ion-label>
+            <ion-select name="Estatus" [(ngModel)]="doc.estatus">
+              <ion-select-option>Activo</ion-select-option>
+              <ion-select-option>Terminado</ion-select-option>
+              <ion-select-option>Cancelado</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      -->
+      <ion-row>
+        <ion-col *ngIf="!isUpdate" size="12">
+          <ion-button
+            class="btnDetalle"
+            expand="full"
+            shape="round"
+            type="submit"
+            [disabled]="!registerForm.form.valid || valrang()"
+            >Actualizar
+          </ion-button>
+        </ion-col>
+        <ion-col *ngIf="isUpdate && doc.idCaso" size="12">
+          <ion-button
+            class="btnDetalle"
+            expand="full"
+            shape="round"
+            full
+            type="button"
+            (click)="actualizar()"
+            [disabled]="!registerForm.form.valid"
+            >Actualizar</ion-button
+          >
+        </ion-col>
+        <ion-col *ngIf="isUpdate" size="12">
+          <ion-button
+            class="btnDetalle"
+            expand="full"
+            shape="round"
+            full
+            type="button"
+            (click)="borrar()"
+            >Borrar</ion-button
+          >
+      </ion-col>
+      </ion-row>
+    </form>
+  </ion-grid>
+</ion-content>

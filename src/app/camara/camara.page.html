@@ -1,0 +1,290 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-button
+      slot="start"
+      (click)="salir()"
+      fill="clear"
+      style="color: white;"
+      ><ion-icon name="arrow-back" mode="ios"></ion-icon
+    ></ion-button>
+    <ion-title>Evidencias</ion-title>
+    <ion-button
+      (click)="tomarFoto()"
+      slot="end"
+      fill="clear"
+      style="color: white;"
+    >
+      <ion-icon name="camera" mode="ios"></ion-icon>
+    </ion-button>
+    <ion-button
+      slot="end"
+      (click)="tomarVideo()"
+      style="color: white;"
+      fill="clear"
+    >
+      <ion-icon name="videocam"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<!--
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" push="2">
+        <p *ngIf="foto">Foto</p>
+        <img src="{{ foto }}" *ngIf="foto" class="recursosTomados" />
+
+        <p *ngIf="false">Video</p>
+        <video
+          *ngIf="video"
+          controls="controls"
+          autoplay
+          preload="metadata"
+          webkit-playsinline="webkit-playsinline"
+          class="recursosTomados"
+        >
+          <source
+            id="idVideo"
+            #myvideo
+            [src]="urlVideo"
+            type="video/mp4"
+            *ngIf="urlVideo"
+          />
+        </video>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  -->
+  <ion-row>
+    <ion-col size="12">
+      <ion-button
+        type="button"
+        (click)="actualizar()"
+        [disabled]="!doc || !doc.id || firebaseService.modelo['evidencias'].length<1"
+        class="boton"
+        shape="round"
+        expand="full"
+        >Guardar
+      </ion-button>
+    </ion-col>
+  </ion-row> 
+  <!-- -->
+  <div *ngIf="evidencias.length == 0">
+    <ion-item>No hay evidencias.</ion-item>
+  </div>
+  <!-- -->
+  <ion-grid>
+    <!-- <ion-row no-padding class="hdr">
+      <ion-col class="ion-text-center">
+        <h6 style="text-align:center;">Evidencias</h6>
+      </ion-col>
+    </ion-row> -->
+
+    <ion-row>
+      <ion-col size="12">
+        <ion-item>
+          <ion-label>Ver por:</ion-label>
+          <ion-select
+            value="valor"
+            okText="Aceptar"
+            cancelText="Cancelar"
+            [(ngModel)]="valor"
+            (ionChange)="codeSelected()"
+          >
+            <ion-select-option value="1">Recursos pequeños</ion-select-option>
+            <ion-select-option value="2">Recursos grandes</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <div>
+      <!-- Responsive Layout with Ion Grid-->
+      <ion-grid>
+        <ion-row>
+          <!--vista de imágenes pequeñas  -->
+          <ion-col
+            size="6"
+            *ngFor="let item of evidencias; even as isEven"
+            (click)="selectRow($event, item)"
+          >
+            <div *ngIf="valor == '1'">
+              <!-- imagen en pequeña -->
+              <div
+                *ngIf="item.tipo == 'imagen'"
+                style="background-color:#2a4a7c;border-radius: 20px;"
+              >
+                <div>
+                  <img
+                    [src]="item.urlPhoto"
+                    style="height:100px;width:100%; border-top-left-radius:20px;"
+                  />
+                  <ion-row class="ion-no-padding">
+                    <ion-col size="3" push="1" class="ion-no-padding">
+                      <p style="color:white;font-size: small;">
+                        <b>No.{{doc.idCase}}</b>
+                      </p>
+                    </ion-col>
+                    <ion-col size="6" push="2" class="ion-no-padding">
+                      <p style="color:white;font-size: small;">
+                        <b>{{item.id}}</b>
+                      </p>
+                    </ion-col>
+                  </ion-row>
+                  <!--
+                  <ion-row class="ion-no-padding">
+                    <ion-item style="color:silver;">
+                      <ion-checkbox color="primary" [(ngModel)]="item.delete"></ion-checkbox>
+                      <ion-label>Eliminar</ion-label>
+                    </ion-item>
+                  </ion-row>
+                  -->
+                </div>
+              </div>
+
+              <!-- video en pequeño -->
+              <div *ngIf="item.tipo=='video'"
+                style="background-color:#2a4a7c;border-radius: 20px;"
+              >
+                <div>
+                  <video
+                    controls="controls"
+                    style="height:100px;width:100%;border-radius: 20px;"
+                    preload="metadata"
+                    webkit-playsinline="webkit-playsinline"
+                    class="videoPlayer"
+                  >
+                    <source
+                      [src]="item.urlPhoto"
+                      type="video/mp4"
+                      style="border-top-left-radius:20px;"
+                    />
+                  </video>
+                  <ion-row class="ion-no-padding">
+                      <ion-col size="3" push="1" class="ion-no-padding">
+                        <p style="color:white;font-size: small;">
+                          <b>No.{{doc.idCase}}</b>
+                        </p>
+                      </ion-col>
+                      <ion-col size="6" push="2" class="ion-no-padding">
+                        <p style="color:white;font-size: small;">
+                          <b>{{item.id}}</b>
+                        </p>
+                      </ion-col>
+                  </ion-row>
+                    <!--
+                      <ion-row class="ion-no-padding">
+                        <ion-item style="color:silver;">
+                          <ion-checkbox color="primary" [(ngModel)]="item.delete"></ion-checkbox>
+                          <ion-label>Eliminar</ion-label>
+                        </ion-item>
+                      </ion-row>
+                      -->
+                </div>
+              </div>
+            </div>
+          </ion-col>
+          <!-- vista imagenes grandes -->
+          <ion-col
+            size="12"
+            *ngFor="let item of evidencias; even as isEven"
+            (click)="selectRow($event, item)"
+          >
+            <div *ngIf="valor == '2'">
+              <!--imagen en grande  -->
+              <div
+                *ngIf="item.tipo == 'imagen'"
+                style="background-color:#2a4a7c;border-radius: 20px;"
+              >
+                <div>
+                  <img
+                    [src]="item.urlPhoto"
+                    style="height:250px;width:100%;border-top-left-radius:20px;"
+                  />
+                  <ion-row class="ion-no-padding">
+                    <ion-col size="3" push="1" class="ion-no-padding">
+                      <p style="color:white;">
+                        <b>No.{{doc.idCase}}</b>
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="6"
+                      push="2"
+                      class="ion-text-center ion-no-padding"
+                    >
+                      <p style="color:white;">
+                        <b>{{item.id}}</b>
+                      </p>
+                    </ion-col>
+                  </ion-row>
+                  <!--
+                  <ion-row class="ion-no-padding">
+                    <ion-item style="color:silver;">
+                      <ion-checkbox color="primary" [(ngModel)]="item.delete"></ion-checkbox>
+                      <ion-label>Eliminar</ion-label>
+                    </ion-item>
+                  </ion-row>
+                  -->
+                </div>
+              </div>
+
+              <!-- video en grande -->
+              <div *ngIf="item.tipo=='video'"
+              style="background-color:#2a4a7c;border-radius: 20px;"
+              >
+                <div>
+                  <video
+                    controls="controls"
+                    style="height:250px;width:100%;border-radius: 20px;"
+                    preload="metadata"
+                    webkit-playsinline="webkit-playsinline"
+                    class="videoPlayer"
+                  >
+                    <source
+                      [src]="item.urlPhoto"
+                      type="video/mp4"
+                      style="border-radius: 20px;"
+                    />
+                  </video>
+                    <ion-row class="ion-no-padding">
+                      <ion-col
+                        size="3"
+                        push="1"
+                        class="ion-text-center ion-no-padding"
+                      >
+                        <p style="color:white;">
+                          <b>No.{{doc.idCase}}</b>
+                        </p>
+                      </ion-col>
+
+                      <ion-col
+                        size="6"
+                        push="2"
+                        class="ion-text-center ion-no-padding"
+                      >
+                        <p style="color:white;">
+                          <b>{{item.id}}</b>
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <!--
+                    <ion-row class="ion-no-padding">
+                      <ion-item style="color:silver;">
+                        <ion-checkbox color="primary" [(ngModel)]="item.delete"></ion-checkbox>
+                        <ion-label>Eliminar</ion-label>
+                      </ion-item>
+                    </ion-row>
+                    -->
+                  </div>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </ion-grid>
+</ion-content>

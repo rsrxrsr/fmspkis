@@ -1,0 +1,181 @@
+<ion-header>
+  <ion-row style="background-color:#96a3b2;height: 100%;">
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center>
+      <div>
+        <img src="assets/imgs/logo1.png" alt="" />
+      </div>
+    </ion-col>
+    <ion-col size="7" text-center>
+      <p style="color: white;"><b>Listado de casos</b></p>
+    </ion-col>
+    <ion-col size="1" text-center>
+      <p style="height: 100%;width: 100%;">
+        <b>
+          <ion-icon
+            name="add-circle"
+            style="color: white;"
+            (click)="selectRow(null, null)"
+          ></ion-icon>
+        </b>
+      </p>
+    </ion-col>
+    <ion-col size="2" style="background-color:#2a4a7c;">
+      <ion-menu-button class="menuHam"></ion-menu-button>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-content padding>
+  <!-- <ion-searchbar> -->
+  <div *ngIf="this.firebaseService.modelo[coleccion] == 0">
+    <ion-item>No hay información</ion-item>
+  </div>
+  <ion-searchbar
+    mode="md"
+    [(ngModel)]="searchData"
+    (ionInput)="setFilter(searchData, firebaseService.modelo[coleccion])"
+  ></ion-searchbar>
+  <div *ngIf="swFind" class="spinner-container">
+    <ion-spinner></ion-spinner>
+  </div>
+  <!-- </ion-searchbar> -->
+  <ion-grid>
+    <ion-row no-padding style="background-color: #96a3b2;color: white;">
+      <ion-col size="2" texte-center>
+        <p>Caso</p>
+      </ion-col>
+      <ion-col size="3" text-center>
+        <p>Fecha</p>
+      </ion-col>
+      <ion-col size="4" text-center>
+        <p>Clasificación</p>
+      </ion-col>
+
+      <ion-col size="3" text-center>
+        <p>Municipio</p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="2" text-center>
+        <button>
+          <ion-icon
+            slot="icon-only"
+            name="arrow-dropup-circle"
+            (click)="setSort('titulo')"
+          ></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col size="3" text-center>
+        <button>
+          <ion-icon
+            slot="icon-only"
+            name="arrow-dropup-circle"
+            (click)="setSort('dateCreation')"
+          ></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col size="4" text-center>
+        <button>
+          <ion-icon
+            slot="icon-only"
+            name="arrow-dropup-circle"
+            (click)="setSort('idClassification')"
+          ></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col size="3" text-center>
+        <button>
+          <ion-icon
+            slot="icon-only"
+            name="arrow-dropup-circle"
+            (click)="setSort('municipio')"
+          ></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+    <div
+      *ngFor="let item of items; first as isFirst; even as isEven"
+      (click)="selectRow($event, item)"
+      text-wrap
+    >
+      <ion-card class="card ion-padding">
+        <ion-row>
+          <ion-col size="5" class="celdasNegritas">
+            <b>No.</b> &nbsp; <b>{{ item.idCase }}</b>
+          </ion-col>
+          <ion-col size="7" class="celdasNegritas">
+            {{ item.titulo }}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="5" class="celdasNegritas">
+            <b>Categoría:</b>
+          </ion-col>
+          <ion-col size="7" class="celdasNegritas">
+            {{ getCategoria(item.idClassification) }}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="5" class="celdasNegritas">
+            <b>Fecha:</b>
+          </ion-col>
+          <ion-col size="7" class="celdasNegritas">
+            {{ item.dateCreation | date: "dd-MM-yy HH:mm:ss" }}
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="5" class="celdasNegritas">
+            <b>Municipio:</b>
+          </ion-col>
+          <ion-col size="7" class="celdasNegritas">
+            {{ item.municipio }}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="5">
+            <b class="celdasNegritas">Riesgo:</b>
+            &nbsp;<b
+              *ngIf="item.riesgo == 'Alto'"
+              style="color:red"
+              class="circuloStatus"
+            >
+              •</b
+            >
+
+            &nbsp;<b
+              *ngIf="item.riesgo == 'Medio'"
+              style="color:orange"
+              class="circuloStatus"
+            >
+              •</b
+            >
+
+            &nbsp;<b
+              *ngIf="item.riesgo == 'Bajo'"
+              style="color:green"
+              class="circuloStatus"
+            >
+              •</b
+            >
+          </ion-col>
+
+          <!-- <ion-col size="2"> </ion-col> -->
+          <ion-col class="celdasNegritas" size="7">
+            <b>Impacto:</b> &nbsp; <b>{{ item.impacto }}</b>
+          </ion-col>
+          <!-- <ion-col class="celdasNegritas" size="3">
+            {{ item.impacto }}
+          </ion-col> -->
+        </ion-row>
+        <ion-row>
+          <ion-col size="2" push="8">
+            <ion-button class="btnDetalle">
+              <ion-icon name="arrow-forward" mode="ios"> </ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
+  </ion-grid>
+</ion-content>
