@@ -39,12 +39,12 @@ export class AccionPage implements OnInit {
   public registrar() {
     this.doc.informe = this.doc.informe ? this.doc.informe : "";
     this.doc.informe+="\r"+this.fh+" "+this.firebaseService["usuario"].usuario+": "+this.informe;
-    this.firebaseService.updateDocument(this.coleccion, this.doc.id, this.doc );
+    this.firebaseService.updateDocument(this.coleccion, this.doc );
     this.presentAlert("Documento registrado");          
   }
 
   public actualizar() {
-    this.firebaseService.updateDocument(this.coleccion, this.doc.id, this.doc );
+    this.firebaseService.updateDocument(this.coleccion, this.doc );
     this.presentAlert("Documento actualizado"); 
   }
 

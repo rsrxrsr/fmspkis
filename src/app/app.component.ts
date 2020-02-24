@@ -33,19 +33,14 @@ export class AppComponent {
       this.splashScreen.hide();
       // FCM
       this.fcm.getToken().then(token => {
-        //alert('Get token:'+token);
         this.firebase.modelo["token"]=token;
-        //console.log("token",token);
         this.firebase.addDocument("notificaciones",{"user":"user","token":token,msg:'Get'});
       });
       this.fcm.onTokenRefresh().subscribe(token => {
-        //alert('Refresh:'+token);
         this.firebase.modelo["control"]={"token":token};
-        //console.log("token",token);
         this.firebase.addDocument("notificaciones",{"user":"user","token":token,msg:'Refresh'});
       });
       this.fcm.onNotification().subscribe(data => {
-        //console.log(data);
         let doc:any;
         doc = JSON.parse(data.mensaje);
         let estatus:string=(this.firebase["usuario"]) ? 'foreground' : 'background';

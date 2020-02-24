@@ -89,7 +89,6 @@ export class UsuarioPage implements OnInit {
         this.doc["foto"] = fileInfo.downloadUrl;
         this.firebaseService.updateDocument(
           this.coleccion,
-          this.doc.id,
           this.doc
         );
         this.presentAlert("Documento actualizado");
@@ -97,7 +96,6 @@ export class UsuarioPage implements OnInit {
     } else {
       this.firebaseService.updateDocument(
         this.coleccion,
-        this.doc.id,
         this.doc
       );
       this.firebaseService.createUser(this.doc["correo"], this.doc.pass);

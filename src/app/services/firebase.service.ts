@@ -6,6 +6,8 @@ import { AngularFireAuthModule } from '@angular/fire/auth'
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClient } from '@angular/common/http';
 
+import { AlertController } from '@ionic/angular';
+
 //import { NativeGeocoder, NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
  
 @Injectable({
@@ -16,6 +18,7 @@ export class FirebaseService {
 //-------------------------------------------------------------------------------------------------------------------
   public modelo=[];
   public model=[];
+  public entity={};
   constructor(
               public http: HttpClient,
               public afs: AngularFirestore,
@@ -24,15 +27,15 @@ export class FirebaseService {
               public geolocation: Geolocation,
   //          public nativeGeocoder: NativeGeocoder,
   //          public nativeGeocoderOptions:NativeGeocoderOptions
+              public alertController: AlertController,
               ) {}
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Método genérico para subir elementos a firebase.
   // params: objeto: objeto javascript, coleccion: nombre de la colección
-  public addDocument(coleccion: string, objeto: any){
-    delete objeto.id;
+  public addDocument(coleccion: string, doc: any){
     return new Promise<any>((resolve, reject) => {
-      this.afs.collection(coleccion).add(objeto)
+      this.afs.collection(coleccion).add(doc.data)
       .then(
         res => resolve(res),
         err => reject(err)
@@ -40,8 +43,8 @@ export class FirebaseService {
     });
   }
 
-  public upsertDocument( coleccion: string, id: string, doc: any){
-    console.log("Upsert",coleccion,id,doc);
+  public upsertDocument( coleccion: string, id:any, doc: any){
+    console.log("Upsert",coleccion,doc);
     return new Promise<any>((resolve, reject) => {
       this.afs.collection(coleccion).doc(id).set(doc)
       .then(
@@ -54,14 +57,11 @@ export class FirebaseService {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Método genérico para editar un documento en firebase, es necesario que el objeto tenga el id inyectado o pasado como parámetro
   // params: objeto: objeto javascript, colección: nombre de la colección.
-  public updateDocument( coleccion: string, id: string, doc: any){
-    //if(id != null)
-    //objeto.id = id;
-    console.log("Update",coleccion,id,doc);
-    let objeto = Object.assign({}, doc);  
-    delete objeto.id;  
+  public updateDocument( coleccion: string, doc: any){
+    console.log("Update",coleccion,doc);
+    //let objeto = Object.assign({}, doc);  
     return new Promise<any>((resolve, reject) => {
-      this.afs.collection(coleccion).doc(id).update(objeto)
+      this.afs.collection(coleccion).doc(doc.id).update(doc.data)
       .then(
         res => resolve(res),
         err => reject(err)
@@ -72,9 +72,9 @@ export class FirebaseService {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Método genérico para eliminar un documento en firebase
   // params: id del documento, colección
-  public deleteDocument(coleccion, id){
+  public deleteDocument(coleccion, doc){
     return new Promise<any>((resolve, reject) => {
-      this.afs.collection(coleccion).doc(id).delete()
+      this.afs.collection(coleccion).doc(doc.id).delete()
       .then(
         res => resolve(res),
         err => reject(err)
@@ -110,6 +110,39 @@ export class FirebaseService {
   // params: colección: nombre de la colección
   // para leer un elemento obtenido com un objeto normal javascript: respuesta[i].payload.doc.data()
   //item['municipios']=[{id:1,cvMunicipio:"CV",municipio:"mun"}];
+
+  public consultar(entitySet, coleccion: string) {
+    return new Promise<any>((resolve, reject) => {
+      this.afs.collection(coleccion).snapshotChanges().subscribe(
+        querySnap => {
+        var snapshot = [];
+        querySnap. forEach(function(doc) {
+          let item={id:doc.payload.doc.id,data:doc.payload.doc.data()};
+          snapshot.push(item);
+        });
+        console.log("Consulta: ", coleccion, snapshot );
+        entitySet[coleccion]=snapshot
+        resolve(snapshot);
+      })      
+    })
+  }
+
+  public consultarPor(entitySet, coleccion: string, campo:string, operador, value){
+    return new Promise<any>((resolve, reject) => {
+      this.afs.collection(coleccion, ref => ref.where(campo, operador, value))
+        .snapshotChanges().subscribe(querySnapshot => {
+          var snapshot = [];
+          querySnapshot. forEach(function(doc) {
+            let item={id:doc.payload.doc.id,data:doc.payload.doc.data()};
+            snapshot.push(item);
+            });
+          console.log("Consulta: ", coleccion, snapshot );
+          entitySet[coleccion]=snapshot;
+          resolve(snapshot);
+        })     
+    });
+  }
+
   public consultarColeccion(coleccion: string){
     return new Promise<any>((resolve, reject) => {
       this.afs.collection(coleccion).snapshotChanges().subscribe(querySnapshot => {
@@ -542,6 +575,39 @@ public sendEmail(message:any){
   });
 }
 
+async presentAlert(message) {
+  const alert = await this.alertController.create({
+    header: 'Exito!',
+    subHeader: 'En actualización',
+    "message": message,
+    buttons: ['OK']
+  });
+  await alert.present();
+}
+
+async presentAlertConfirm(message, callback, _this) {
+  const alert = await this.alertController.create({
+    header: 'Confirmación!',
+    message: message,
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel',
+        cssClass: 'secondary',
+        handler: (blah) => {
+          console.log('Confirm Cancel: blah');
+        }
+      }, {
+        text: 'Ok',
+        handler: () => {
+          console.log('Confirm Okay');
+          callback(_this);
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
 
 } // End Service
 
@@ -575,4 +641,5 @@ generateAddress(addressObj){
 return address.slice(0, -2);
 }
 */
+
 

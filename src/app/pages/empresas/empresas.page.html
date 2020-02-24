@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-row style="background-color:#96a3b2;height: 100%;">
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center>
+      <div>
+        <img src="assets/imgs/logo1.png" alt="" />
+      </div>
+    </ion-col>
+    <ion-col size="7" text-center>
+      <p style="color: white;"><b>Empresas</b></p>
+    </ion-col>
+    <ion-col size="1" text-center>
+      <p style="height: 100%;width: 100%;">
+        <b>
+          <ion-icon
+            name="add-circle"
+            style="color: white;"
+            (click)="selectRow(null, null)"
+          ></ion-icon>
+        </b>
+      </p>
+    </ion-col>
+    <ion-col size="2" style="background-color:#2a4a7c;">
+      <ion-menu-button class="menuHam" style="color: white;"></ion-menu-button>
+    </ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-content padding class="tema-app">
+  <div padding-horizontal text-center >
+      <img src="../../assets/imgs/text.png" alt="Observador ciudadano">
+  </div>
+
+  <div *ngIf="model.entitySet[coleccion] == 0">
+    <ion-item>No hay información</ion-item>
+  </div>
+
+<ion-grid size-lg>
+  <ion-row size-lg>
+    <ion-col col-2 size-lg></ion-col>
+    <ion-col col-8 size-lg>  
+      <ion-row no-padding class="grad">
+        <ion-col text-center>
+          <h6>Empresa</h6>
+        </ion-col>
+        <ion-col text-left>
+          <h6>Roll de la empresa</h6>
+        </ion-col>
+        <ion-col col-1></ion-col>
+      </ion-row>
+    </ion-col>
+    <ion-col col-2 size-lg></ion-col>
+  </ion-row>
+
+  <ion-row>  
+    <ion-col col-2></ion-col>
+      <ion-col col-8>
+        <div *ngFor="let item of model.entitySet[coleccion];even as isEven;" (click)="selectRow($event, item)">
+          <ion-row no-padding [ngClass]="isEven? 'even' : 'odd'" class="pointer">
+            <ion-col text-center>
+              {{ item.data.empresa}}
+            </ion-col>
+            <ion-col text-left>
+              {{ item.data.rollEmpresa }}
+            </ion-col>
+            <ion-col col-1>
+              <ion-icon name="eye" item-start class="text-primary" title="Ver detalle"></ion-icon>
+            </ion-col>             
+          </ion-row>
+        </div>        
+      </ion-col>
+    <ion-col col-2></ion-col>
+  </ion-row>
+
+</ion-grid>  
+</ion-content>

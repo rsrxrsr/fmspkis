@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-row style="background-color:#96a3b2;height: 100%;">
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center>
+      <div>
+        <img src="assets/imgs/logo1.png" alt="" />
+      </div>
+    </ion-col>    
+    <ion-col size="8" text-center>
+      <ion-toolbar color="#96a3b2">
+        <ion-buttons slot="start">
+          <ion-back-button style="color: white;"></ion-back-button>
+        </ion-buttons>
+        <p style="color: white;"><b>Función</b></p>
+      </ion-toolbar>      
+    </ion-col>
+    <ion-col size="2" style="background-color: #2a4a7c;" text-center></ion-col>
+  </ion-row>
+</ion-header>
+
+<ion-content padding class="tema-app">
+<div padding-horizontal text-center >
+    <img src="../../assets/imgs/text.png" alt="Observador ciudadano">
+</div>
+<ion-grid>  
+<ion-row size-lg>
+  <ion-col col-2 size-lg></ion-col>
+  <ion-col col-8 size-lg>  
+
+    <form (ngSubmit)="model.guardar(coleccion,doc)" #registerForm="ngForm"  >
+
+      <ion-row>
+        <ion-col>
+          <ion-list inset>    
+            <ion-item>
+              <ion-label stacked>Función</ion-label>
+              <ion-input type="text" placeholder="Teclee Función" name="funcion" [(ngModel)]="doc.data.funcion" required></ion-input>
+            </ion-item>
+            <br />
+            <ion-item color="light">
+              <ion-label stacked>Roll</ion-label>
+              <ion-select name="roll" [(ngModel)]="doc.data.roll" required>
+                <ion-select-option [value]="opcion.data.roll"
+                 *ngFor="let opcion of model.entitySet['roll']"
+                > {{ opcion.data.roll }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item color="light">
+              <ion-label stacked>Roll de la Empresa</ion-label>
+              <ion-select name="rollEmpresa" [(ngModel)]="doc.data.rollEmpresa" required
+                (ionChange)="model.consultarPor('roll',doc.data.rollEmpresa)">
+                <ion-select-option>FMS</ion-select-option>
+                <ion-select-option>Cliente</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+  
+      <ion-row>
+        <ion-col class="ion-col" *ngIf="!isUpdate">
+          <button ion-button class="submit-btn round" full type="submit"  [disabled]="!registerForm.form.valid">Guardar</button>
+        </ion-col>
+        <ion-col class="ion-col" *ngIf="isUpdate">
+          <button ion-button class="submit-btn round" full type="button"
+            [disabled]="!registerForm.form.valid" (click)="model.actualizar(coleccion,doc)" >Actualizar</button>
+        </ion-col>
+        <ion-col class="ion-col" *ngIf="isUpdate">
+          <button ion-button class="submit-btn round" full type="button"
+            [disabled]="!registerForm.form.valid" (click)="model.confirmarBorrar(coleccion,doc)" >Borrar</button>
+        </ion-col>
+      </ion-row>
+  
+    </form>
+
+  </ion-col>
+</ion-row>
+</ion-grid>       
+</ion-content>
